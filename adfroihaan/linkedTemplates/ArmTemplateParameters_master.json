@@ -1,0 +1,33 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adfroihaan"
+		},
+		"ADLS_roihaan_accountKey": {
+			"value": ""
+		},
+		"SQL_roihaan_password": {
+			"value": ""
+		},
+		"ADLS_roihaan_properties_typeProperties_url": {
+			"value": "https://storageaccroihaan.dfs.core.windows.net/"
+		},
+		"SQL_roihaan_properties_typeProperties_server": {
+			"value": "roihaan.database.windows.net"
+		},
+		"SQL_roihaan_properties_typeProperties_database": {
+			"value": "data"
+		},
+		"SQL_roihaan_properties_typeProperties_userName": {
+			"value": "roihaan"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

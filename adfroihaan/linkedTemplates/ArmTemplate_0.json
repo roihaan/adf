@@ -1,0 +1,318 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adfroihaan"
+		},
+		"ADLS_roihaan_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ADLS_roihaan'"
+		},
+		"SQL_roihaan_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'SQL_roihaan'"
+		},
+		"ADLS_roihaan_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://storageaccroihaan.dfs.core.windows.net/"
+		},
+		"SQL_roihaan_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "roihaan.database.windows.net"
+		},
+		"SQL_roihaan_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "data"
+		},
+		"SQL_roihaan_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "roihaan"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_roihaan')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ADLS_roihaan_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ADLS_roihaan_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_roihaan')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"server": "[parameters('SQL_roihaan_properties_typeProperties_server')]",
+					"database": "[parameters('SQL_roihaan_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('SQL_roihaan_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('SQL_roihaan_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/localroihaan')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CSV_ADLS_roihaan')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS_roihaan",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"container_name": {
+						"type": "string",
+						"defaultValue": "development"
+					},
+					"folder_name": {
+						"type": "string"
+					},
+					"file_name": {
+						"type": "string"
+					},
+					"delimiter_name": {
+						"type": "string",
+						"defaultValue": ","
+					},
+					"row_as_header": {
+						"type": "bool",
+						"defaultValue": true
+					}
+				},
+				"folder": {
+					"name": "ADLS"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().file_name",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().folder_name",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().container_name",
+							"type": "Expression"
+						}
+					},
+					"columnDelimiter": {
+						"value": "@dataset().delimiter_name",
+						"type": "Expression"
+					},
+					"escapeChar": "\\",
+					"firstRowAsHeader": {
+						"value": "@dataset().row_as_header",
+						"type": "Expression"
+					},
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADLS_roihaan')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_roihaan')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQL_roihaan",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"schema_name": {
+						"type": "string"
+					},
+					"table_name": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Database"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "customer_id",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "home_store",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "customer_first_name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "customer_email",
+						"type": "nvarchar"
+					},
+					{
+						"name": "customer_since",
+						"type": "date"
+					},
+					{
+						"name": "loyalty_card_number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "birthdate",
+						"type": "date"
+					},
+					{
+						"name": "gender",
+						"type": "nvarchar"
+					},
+					{
+						"name": "birth_year",
+						"type": "smallint",
+						"precision": 5
+					}
+				],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().schema_name",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().table_name",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SQL_roihaan')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/example_test')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "csv_to_sql",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "CSV_ADLS_roihaan",
+								"type": "DatasetReference",
+								"parameters": {
+									"container_name": "development",
+									"folder_name": "CoffeeSalesData",
+									"file_name": "customer.csv",
+									"delimiter_name": ",",
+									"row_as_header": true
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQL_roihaan",
+								"type": "DatasetReference",
+								"parameters": {
+									"schema_name": "dbo",
+									"table_name": "customer"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "example"
+				},
+				"annotations": [],
+				"lastPublishTime": "2024-07-12T06:33:42Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CSV_ADLS_roihaan')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_roihaan')]"
+			]
+		}
+	]
+}
