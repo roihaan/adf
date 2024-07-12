@@ -1,9 +1,9 @@
 {
-	"name": "example_test",
+	"name": "example_local_to_ADLS",
 	"properties": {
 		"activities": [
 			{
-				"name": "csv_to_sql",
+				"name": "sql_to_csv",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -16,20 +16,20 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "DelimitedTextSource",
-						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
-						}
+						"type": "SqlServerSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
 					},
 					"sink": {
-						"type": "SqlServerSink",
-						"writeBehavior": "insert",
-						"sqlWriterUseTableLock": false
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
 					},
 					"enableStaging": false,
 					"translator": {
@@ -43,24 +43,24 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "CSV_ADLS_roihaan",
+						"referenceName": "SQL_laptop",
 						"type": "DatasetReference",
 						"parameters": {
-							"container_name": "development",
-							"folder_name": "CoffeeSalesData",
-							"file_name": "customer.csv",
-							"delimiter_name": ",",
-							"row_as_header": true
+							"schema_name": "HumanResources",
+							"table_name": "Department"
 						}
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "SQL_roihaan",
+						"referenceName": "CSV_ADLS_roihaan",
 						"type": "DatasetReference",
 						"parameters": {
-							"schema_name": "dbo",
-							"table_name": "customer"
+							"container_name": "development",
+							"folder_name": "data",
+							"file_name": "Department.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
 						}
 					}
 				]
@@ -69,8 +69,6 @@
 		"folder": {
 			"name": "example"
 		},
-		"annotations": [],
-		"lastPublishTime": "2024-07-12T06:33:42Z"
-	},
-	"type": "Microsoft.DataFactory/factories/pipelines"
+		"annotations": []
+	}
 }
