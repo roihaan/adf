@@ -1,0 +1,74 @@
+{
+	"name": "example_local_to_ADLS",
+	"properties": {
+		"activities": [
+			{
+				"name": "sql_to_csv",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SQL_laptop",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "HumanResources",
+							"table_name": "Department"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CSV_ADLS_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "development",
+							"folder_name": "data",
+							"file_name": "Department.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
+						}
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "example"
+		},
+		"annotations": []
+	}
+}
