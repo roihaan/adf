@@ -1,0 +1,48 @@
+{
+	"name": "Ratings",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS_roihaan",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Ratings.csv",
+				"fileSystem": "development"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "PrimaryGenre",
+				"type": "String"
+			},
+			{
+				"name": "year",
+				"type": "String"
+			},
+			{
+				"name": "AverageRating",
+				"type": "String"
+			},
+			{
+				"name": "HighestRating",
+				"type": "String"
+			},
+			{
+				"name": "LowestRating",
+				"type": "String"
+			},
+			{
+				"name": "Count",
+				"type": "String"
+			}
+		]
+	}
+}
