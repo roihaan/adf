@@ -1,0 +1,74 @@
+{
+	"name": "SQL_roihaan",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQL_roihaan",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"schema_name": {
+				"type": "string"
+			},
+			"table_name": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Database"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "customer_id",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "home_store",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "customer_first_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "customer_email",
+				"type": "nvarchar"
+			},
+			{
+				"name": "customer_since",
+				"type": "date"
+			},
+			{
+				"name": "loyalty_card_number",
+				"type": "nvarchar"
+			},
+			{
+				"name": "birthdate",
+				"type": "date"
+			},
+			{
+				"name": "gender",
+				"type": "nvarchar"
+			},
+			{
+				"name": "birth_year",
+				"type": "smallint",
+				"precision": 5
+			}
+		],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().schema_name",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().table_name",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

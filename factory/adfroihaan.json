@@ -1,0 +1,9 @@
+{
+	"name": "adfroihaan",
+	"location": "southeastasia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "dc6ad8a8-7d67-47d0-abe9-320c3b018d8e",
+		"tenantId": "e522de87-3b5f-4914-b700-3ee0ac8e7497"
+	}
+}
