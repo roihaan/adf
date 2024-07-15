@@ -1517,8 +1517,8 @@
 						]
 					},
 					{
-						"name": "SCD_Type_1",
-						"type": "Copy",
+						"name": "SCD_Type_1_Customer",
+						"type": "SqlServerStoredProcedure",
 						"dependsOn": [
 							{
 								"activity": "Insert_CSV_to_SQL",
@@ -1536,82 +1536,12 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"additionalColumns": [
-									{
-										"name": "InsertedDate",
-										"value": {
-											"value": "@utcNow()",
-											"type": "Expression"
-										}
-									},
-									{
-										"name": "ModifiedDate",
-										"value": {
-											"value": "@utcNow()",
-											"type": "Expression"
-										}
-									}
-								],
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "SqlServerSink",
-								"writeBehavior": "upsert",
-								"upsertSettings": {
-									"useTempDB": true,
-									"keys": [
-										"CustomerID"
-									]
-								},
-								"sqlWriterUseTableLock": false
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
+							"storedProcedureName": "[[dbo].[SCD_Type_1_Customer]"
 						},
-						"inputs": [
-							{
-								"referenceName": "SQL_roihaan",
-								"type": "DatasetReference",
-								"parameters": {
-									"schema_name": "dbo",
-									"table_name": "CustomerSource"
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "SQL_roihaan",
-								"type": "DatasetReference",
-								"parameters": {
-									"schema_name": "dbo",
-									"table_name": "DimCustomer"
-								}
-							}
-						]
-					},
-					{
-						"name": "Stored procedure1",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {}
+						"linkedServiceName": {
+							"referenceName": "SQL_roihaan",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"policy": {
@@ -1626,7 +1556,8 @@
 				"[concat(variables('factoryId'), '/datasets/BINARY_HTTP_solliancepublicdata_Customer')]",
 				"[concat(variables('factoryId'), '/datasets/BINARY_HTTP_roihaan')]",
 				"[concat(variables('factoryId'), '/datasets/CSV_ADLS_roihaan')]",
-				"[concat(variables('factoryId'), '/datasets/SQL_roihaan')]"
+				"[concat(variables('factoryId'), '/datasets/SQL_roihaan')]",
+				"[concat(variables('factoryId'), '/linkedServices/SQL_roihaan')]"
 			]
 		}
 	]
