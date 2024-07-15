@@ -50,12 +50,12 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "JSON_ADLS_roihaan",
+									"referenceName": "JSON_ADLS_hanif",
 									"type": "DatasetReference",
 									"parameters": {
-										"container_name()": "hanifcontainers",
-										"folder_name()": "json_file",
-										"file_name()": {
+										"container_name": "hanifcontainers",
+										"folder_name": "json_file",
+										"file_name": {
 											"value": "@item()",
 											"type": "Expression"
 										}
@@ -65,7 +65,15 @@
 							"outputs": [
 								{
 									"referenceName": "JSON_ADLS_roihaan",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"container_name()": "development",
+										"folder_name()": "data",
+										"file_name()": {
+											"value": "@item()",
+											"type": "Expression"
+										}
+									}
 								}
 							]
 						}
