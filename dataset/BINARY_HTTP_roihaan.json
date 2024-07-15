@@ -1,0 +1,27 @@
+{
+	"name": "BINARY_HTTP_roihaan",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS_roihaan",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"container_name": {
+				"type": "string"
+			},
+			"file_name": {
+				"type": "string"
+			},
+			"folder_name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation"
+			}
+		}
+	}
+}
