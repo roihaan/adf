@@ -18,8 +18,8 @@
 					"source": {
 						"type": "BinarySource",
 						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
 						},
 						"formatSettings": {
 							"type": "BinaryReadSettings"
@@ -45,7 +45,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"container_name": "development",
-							"file_name": "http_ingestion"
+							"folder_name": "http_ingestion"
 						}
 					}
 				]
@@ -89,6 +89,8 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"container_name": "development",
+							"folder_name": "data",
+							"file_name": "CustomerSource.csv",
 							"delimiter_name": ",",
 							"row_as_header": true
 						}
