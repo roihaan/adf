@@ -34,26 +34,30 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "BinarySource",
+									"type": "JsonSource",
 									"storeSettings": {
 										"type": "AzureBlobFSReadSettings",
-										"recursive": true
+										"recursive": true,
+										"enablePartitionDiscovery": false
 									},
 									"formatSettings": {
-										"type": "BinaryReadSettings"
+										"type": "JsonReadSettings"
 									}
 								},
 								"sink": {
-									"type": "BinarySink",
+									"type": "JsonSink",
 									"storeSettings": {
 										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
 									}
 								},
 								"enableStaging": false
 							},
 							"inputs": [
 								{
-									"referenceName": "Binary1",
+									"referenceName": "JSON_ADLS_hanif",
 									"type": "DatasetReference",
 									"parameters": {
 										"container_name": "hanifcontainers",
@@ -67,18 +71,90 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "Binary1_copy1",
+									"referenceName": "JSON_ADLS_roihaan",
 									"type": "DatasetReference",
 									"parameters": {
-										"container_name": "development",
-										"folder_name": "json_ingestion1",
-										"file_name": {
+										"container_name()": "development",
+										"folder_name()": "json_ingestion1",
+										"file_name()": {
 											"value": "@item()",
 											"type": "Expression"
 										}
 									}
 								}
 							]
+						},
+						{
+							"name": "Success Log",
+							"type": "Script",
+							"dependsOn": [
+								{
+									"activity": "Transfer ADLS",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "SQL_roihaan",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"type": "Query",
+										"text": {
+											"value": "@concat('INSERT INTO dbo.image_log (image_name, image_url, ingest_tme) VALUES (''', item(), ''', ''https://storageacchanif.blob.core.windows.net/development/json_file/', item(), ''', GETDATE());')",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						},
+						{
+							"name": "Failed Log",
+							"type": "Script",
+							"dependsOn": [
+								{
+									"activity": "Transfer ADLS",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "SQL_roihaan",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"type": "Query",
+										"text": {
+											"value": "@concat('INSERT INTO dbo.image_log (image_name, image_url, ingest_tme) VALUES (''', item(), ''', ''failed', ''', GETDATE());')",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
 						}
 					]
 				}
@@ -98,7 +174,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlServerSource",
-						"sqlReaderQuery": "SELECT \n    STRING_AGG(file_name,',') AS concatenated_files\nFROM list_json_file;",
+						"sqlReaderQuery": "SELECT \n    STRING_AGG(file_name,',') AS concatenated_files\nFROM list_json;",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -135,7 +211,7 @@
 							"key": "file_name",
 							"value": {
 								"type": "Expression",
-								"content": ""
+								"content": "@split(replace(activity('list_json_file').output.firstRow.concatenated_files, '\\', ''), ',')"
 							}
 						}
 					],
