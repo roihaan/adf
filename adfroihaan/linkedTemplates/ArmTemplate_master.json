@@ -11,6 +11,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ADLS_roihaan'"
 		},
+		"SQL_laptop_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'SQL_laptop'"
+		},
+		"SQL_laptop2_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'SQL_laptop2'"
+		},
 		"SQL_roihaan_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'SQL_roihaan'"
@@ -18,6 +26,34 @@
 		"ADLS_roihaan_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://storageaccroihaan.dfs.core.windows.net/"
+		},
+		"HTTP_sollianpublicdara_customer_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://solliancepublicdata.blob.core.windows.net/dataengineering/dp-203/awdata/CustomerSource.csv"
+		},
+		"SQL_laptop_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "LAPTOP-N0LDBLA4"
+		},
+		"SQL_laptop_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "AdventureWorks2022"
+		},
+		"SQL_laptop_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sa"
+		},
+		"SQL_laptop2_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "DESKTOP-E36FPOQ\\MSSQLSERVER01"
+		},
+		"SQL_laptop2_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "data"
+		},
+		"SQL_laptop2_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sa"
 		},
 		"SQL_roihaan_properties_typeProperties_server": {
 			"type": "string",
@@ -64,6 +100,12 @@
 					"SQL_roihaan_password": {
 						"value": "[parameters('SQL_roihaan_password')]"
 					},
+					"SQL_laptop_password": {
+						"value": "[parameters('SQL_laptop_password')]"
+					},
+					"SQL_laptop2_password": {
+						"value": "[parameters('SQL_laptop2_password')]"
+					},
 					"ADLS_roihaan_properties_typeProperties_url": {
 						"value": "[parameters('ADLS_roihaan_properties_typeProperties_url')]"
 					},
@@ -75,6 +117,27 @@
 					},
 					"SQL_roihaan_properties_typeProperties_userName": {
 						"value": "[parameters('SQL_roihaan_properties_typeProperties_userName')]"
+					},
+					"HTTP_sollianpublicdara_customer_properties_typeProperties_url": {
+						"value": "[parameters('HTTP_sollianpublicdara_customer_properties_typeProperties_url')]"
+					},
+					"SQL_laptop_properties_typeProperties_server": {
+						"value": "[parameters('SQL_laptop_properties_typeProperties_server')]"
+					},
+					"SQL_laptop_properties_typeProperties_database": {
+						"value": "[parameters('SQL_laptop_properties_typeProperties_database')]"
+					},
+					"SQL_laptop_properties_typeProperties_userName": {
+						"value": "[parameters('SQL_laptop_properties_typeProperties_userName')]"
+					},
+					"SQL_laptop2_properties_typeProperties_server": {
+						"value": "[parameters('SQL_laptop2_properties_typeProperties_server')]"
+					},
+					"SQL_laptop2_properties_typeProperties_database": {
+						"value": "[parameters('SQL_laptop2_properties_typeProperties_database')]"
+					},
+					"SQL_laptop2_properties_typeProperties_userName": {
+						"value": "[parameters('SQL_laptop2_properties_typeProperties_userName')]"
 					}
 				}
 			},

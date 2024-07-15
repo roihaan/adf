@@ -8,11 +8,38 @@
 		"ADLS_roihaan_accountKey": {
 			"value": ""
 		},
+		"SQL_laptop_password": {
+			"value": ""
+		},
+		"SQL_laptop2_password": {
+			"value": ""
+		},
 		"SQL_roihaan_password": {
 			"value": ""
 		},
 		"ADLS_roihaan_properties_typeProperties_url": {
 			"value": "https://storageaccroihaan.dfs.core.windows.net/"
+		},
+		"HTTP_sollianpublicdara_customer_properties_typeProperties_url": {
+			"value": "https://solliancepublicdata.blob.core.windows.net/dataengineering/dp-203/awdata/CustomerSource.csv"
+		},
+		"SQL_laptop_properties_typeProperties_server": {
+			"value": "LAPTOP-N0LDBLA4"
+		},
+		"SQL_laptop_properties_typeProperties_database": {
+			"value": "AdventureWorks2022"
+		},
+		"SQL_laptop_properties_typeProperties_userName": {
+			"value": "sa"
+		},
+		"SQL_laptop2_properties_typeProperties_server": {
+			"value": "DESKTOP-E36FPOQ\\MSSQLSERVER01"
+		},
+		"SQL_laptop2_properties_typeProperties_database": {
+			"value": "data"
+		},
+		"SQL_laptop2_properties_typeProperties_userName": {
+			"value": "sa"
 		},
 		"SQL_roihaan_properties_typeProperties_server": {
 			"value": "roihaan.database.windows.net"
