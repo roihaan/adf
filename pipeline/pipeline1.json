@@ -45,80 +45,11 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"container_name": "development",
-							"folder_name": "http_ingestion"
+							"folder_name": "http_ingestion",
+							"file_name": "CustomerSource.csv"
 						}
 					}
 				]
-			},
-			{
-				"name": "Insert_CSV_to_SQL",
-				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "HTTP_to_ADLS",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "DelimitedTextSource",
-						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
-						}
-					},
-					"enableStaging": false
-				},
-				"inputs": [
-					{
-						"referenceName": "CSV_ADLS_roihaan",
-						"type": "DatasetReference",
-						"parameters": {
-							"container_name": "development",
-							"folder_name": "data",
-							"file_name": "CustomerSource.csv",
-							"delimiter_name": ",",
-							"row_as_header": true
-						}
-					}
-				]
-			},
-			{
-				"name": "Copy data3",
-				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "Insert_CSV_to_SQL",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"enableStaging": false
-				}
 			}
 		],
 		"folder": {
