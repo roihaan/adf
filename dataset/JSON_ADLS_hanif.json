@@ -1,0 +1,17 @@
+{
+	"name": "JSON_ADLS_hanif",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS_JSON_roihaan",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation"
+			}
+		},
+		"schema": {}
+	}
+}

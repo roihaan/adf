@@ -2,7 +2,7 @@
 	"name": "JSON_ADLS_roihaan",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "ADLS_JSON_roihaan",
+			"referenceName": "ADLS_roihaan",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {

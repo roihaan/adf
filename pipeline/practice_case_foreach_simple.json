@@ -1,0 +1,90 @@
+{
+	"name": "practice_case_foreach_simple",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('file_name')",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "transfer_ADLS",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "JsonReadSettings"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "JSON_ADLS_roihaan",
+									"type": "DatasetReference",
+									"parameters": {
+										"container_name()": "hanifcontainers",
+										"folder_name()": "json_file",
+										"file_name()": {
+											"value": "@item()",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "JSON_ADLS_roihaan",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"file_name": {
+				"type": "Array",
+				"defaultValue": [
+					"documents.json",
+					"example_json.json"
+				]
+			}
+		},
+		"folder": {
+			"name": "practice_case/Day 4/ForEach"
+		},
+		"annotations": []
+	}
+}
