@@ -1,0 +1,347 @@
+{
+	"name": "list_image_chalenge1_day5",
+	"properties": {
+		"activities": [
+			{
+				"name": "GCS_BlobStorage",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "BinarySource",
+						"storeSettings": {
+							"type": "GoogleCloudStorageReadSettings",
+							"recursive": true
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "GCS_BlobStorage",
+						"type": "DatasetReference",
+						"parameters": {
+							"folder_name": {
+								"value": "@variables('folder_name')",
+								"type": "Expression"
+							},
+							"file_name": {
+								"value": "@variables('file_name')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "dbo",
+							"table_name": "list_image"
+						}
+					}
+				]
+			},
+			{
+				"name": "SQLHanif_BlobStorage",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SQL_hanif",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": {
+								"value": "@variables('schema_name')",
+								"type": "Expression"
+							},
+							"table_name": "list_image"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "dbo",
+							"table_name": "list_image"
+						}
+					}
+				]
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@split(replace(activity('list_image').output.firstRow.concatenated_files, '\\', ''), ',')",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "BinarySource",
+									"storeSettings": {
+										"type": "GoogleCloudStorageReadSettings",
+										"recursive": true
+									},
+									"formatSettings": {
+										"type": "BinaryReadSettings"
+									}
+								},
+								"sink": {
+									"type": "BinarySink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "GCS_BlobStorage",
+									"type": "DatasetReference",
+									"parameters": {
+										"folder_name": "image",
+										"file_name": {
+											"value": "@concat(item(),'.png')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Binary_roihaan",
+									"type": "DatasetReference",
+									"parameters": {
+										"container_name": "development",
+										"folder_name": "data",
+										"file_name": {
+											"value": "@concat(item(),'.png')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Success_log",
+							"type": "Script",
+							"dependsOn": [
+								{
+									"activity": "Copy data1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "SQL_roihaan",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"type": "Query",
+										"text": {
+											"value": "@concat('INSERT INTO dbo.image_list (image_name, url_name) VALUES (''', item(), ''', ''https://hanifstorageaccount.blob.core.windows.net/hanifcontainers/image/', item(), '.png', ''');')",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						},
+						{
+							"name": "Failed_log",
+							"type": "Script",
+							"dependsOn": [
+								{
+									"activity": "Copy data1",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "SQL_roihaan",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"type": "Query",
+										"text": {
+											"value": "@concat('INSERT INTO dbo.image_list (image_name, url_name) VALUES (''', item(), ''', '');')",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "list_image",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "SELECT \n    STRING_AGG(image_name,',') AS concatenated_files\nFROM list_image;",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SQL_hanif_day5",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "list_image",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "pipelineReturnValue",
+					"value": [
+						{
+							"key": "image_name",
+							"value": {
+								"type": "Expression",
+								"content": "@split(replace(activity('list_image').output.firstRow.concatenated_files, '\\', ''), ',')"
+							}
+						}
+					],
+					"setSystemVariable": true
+				}
+			}
+		],
+		"variables": {
+			"folder_name": {
+				"type": "String"
+			},
+			"file_name": {
+				"type": "String"
+			},
+			"schema_name": {
+				"type": "String"
+			},
+			"table_name": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}

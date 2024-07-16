@@ -1,5 +1,5 @@
 {
-	"name": "pipeline1",
+	"name": "JSON",
 	"properties": {
 		"activities": [
 			{
@@ -207,9 +207,6 @@
 					"example_json.json"
 				]
 			}
-		},
-		"folder": {
-			"name": "practice_case/Day 4"
 		},
 		"annotations": []
 	}

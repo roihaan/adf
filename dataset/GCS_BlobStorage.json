@@ -1,0 +1,33 @@
+{
+	"name": "GCS_BlobStorage",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "GoogleCloudStorage_hanif",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"folder_name": {
+				"type": "string"
+			},
+			"file_name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "GoogleCloudStorageLocation",
+				"bucketName": "azure_data_engineer",
+				"folderPath": {
+					"value": "@dataset().folder_name",
+					"type": "Expression"
+				},
+				"fileName": {
+					"value": "@dataset().file_name",
+					"type": "Expression"
+				}
+			}
+		}
+	}
+}

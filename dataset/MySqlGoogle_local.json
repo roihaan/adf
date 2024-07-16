@@ -1,0 +1,23 @@
+{
+	"name": "MySqlGoogle_local",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MySql_roihaan",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"table_name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "MySqlTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": {
+				"value": "@dataset().table_name",
+				"type": "Expression"
+			}
+		}
+	}
+}
