@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "customers",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -15,11 +15,52 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"enableStaging": false
-				}
+					"source": {
+						"type": "MySqlSource"
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "upsert",
+						"upsertSettings": {
+							"useTempDB": true,
+							"keys": [
+								"customer_id"
+							]
+						},
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MySqlGoogle_local",
+						"type": "DatasetReference",
+						"parameters": {
+							"table_name": "customers"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "dbo",
+							"table_name": "customers"
+						}
+					}
+				]
 			},
 			{
-				"name": "Copy data2",
+				"name": "orders",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -31,38 +72,144 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"enableStaging": false
-				}
+					"source": {
+						"type": "MySqlSource",
+						"additionalColumns": [
+							{
+								"name": "ingest_time",
+								"value": {
+									"value": "@utcNow",
+									"type": "Expression"
+								}
+							}
+						]
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "upsert",
+						"upsertSettings": {
+							"useTempDB": true,
+							"keys": [
+								"order_id"
+							]
+						},
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MySqlGoogle_local",
+						"type": "DatasetReference",
+						"parameters": {
+							"table_name": "orders"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "dbo",
+							"table_name": "orders"
+						}
+					}
+				]
 			},
 			{
-				"name": "Copy data3",
+				"name": "order_items",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "MySqlSource",
+						"additionalColumns": [
+							{
+								"name": "ingest_time",
+								"value": {
+									"value": "@utcNow()",
+									"type": "Expression"
+								}
+							}
+						]
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "upsert",
+						"upsertSettings": {
+							"useTempDB": true,
+							"keys": [
+								"order_id",
+								"order_item_id"
+							]
+						},
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MySqlGoogle_local",
+						"type": "DatasetReference",
+						"parameters": {
+							"table_name": "order_items"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "dbo",
+							"table_name": "order_items"
+						}
+					}
+				]
+			},
+			{
+				"name": "fact_customer_rfm",
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Copy data1",
+						"activity": "orders",
 						"dependencyConditions": [
 							"Succeeded"
 						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"enableStaging": false
-				}
-			},
-			{
-				"name": "Copy data4",
-				"type": "Copy",
-				"dependsOn": [
+					},
 					{
-						"activity": "Copy data2",
+						"activity": "customers",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "order_items",
 						"dependencyConditions": [
 							"Succeeded"
 						]

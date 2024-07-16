@@ -1,5 +1,5 @@
 {
-	"name": "MySqlTable1",
+	"name": "MySqlGoogle_local",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "MySql_roihaan",
