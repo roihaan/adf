@@ -188,7 +188,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"container_name": "development",
-										"folder_name": "images",
+										"folder_name": "data",
 										"file_name": {
 											"value": "@concat(item(),'.png')",
 											"type": "Expression"
