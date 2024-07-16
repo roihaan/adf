@@ -1,0 +1,21 @@
+{
+	"name": "Binary_day5_hanif",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQL_hanif_day5",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "image_name",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "list_image"
+		}
+	}
+}
