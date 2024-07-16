@@ -1,5 +1,5 @@
 {
-	"name": "Binary1",
+	"name": "Binary_hanif",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ADLS_JSON_roihaan",
