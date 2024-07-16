@@ -21,7 +21,7 @@
 					},
 					"activities": [
 						{
-							"name": "Transfer ADLS",
+							"name": "Copy data1",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -34,26 +34,30 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "BinarySource",
+									"type": "JsonSource",
 									"storeSettings": {
 										"type": "AzureBlobFSReadSettings",
-										"recursive": true
+										"recursive": true,
+										"enablePartitionDiscovery": false
 									},
 									"formatSettings": {
-										"type": "BinaryReadSettings"
+										"type": "JsonReadSettings"
 									}
 								},
 								"sink": {
-									"type": "BinarySink",
+									"type": "JsonSink",
 									"storeSettings": {
 										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
 									}
 								},
 								"enableStaging": false
 							},
 							"inputs": [
 								{
-									"referenceName": "Binary1",
+									"referenceName": "JSON_ADLS_hanif",
 									"type": "DatasetReference",
 									"parameters": {
 										"container_name": "hanifcontainers",
@@ -67,12 +71,12 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "Binary1_copy1",
+									"referenceName": "JSON_ADLS_roihaan",
 									"type": "DatasetReference",
 									"parameters": {
-										"container_name": "development",
-										"folder_name": "json_ingestion1",
-										"file_name": {
+										"container_name()": "development",
+										"folder_name()": "json_ingest_new",
+										"file_name()": {
 											"value": "@item()",
 											"type": "Expression"
 										}
