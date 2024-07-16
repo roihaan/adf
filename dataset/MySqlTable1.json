@@ -1,0 +1,12 @@
+{
+	"name": "MySqlTable1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MySql_roihaan",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "MySqlTable",
+		"schema": []
+	}
+}
