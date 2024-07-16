@@ -152,12 +152,50 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "SqlServerSource",
-									"queryTimeout": "02:00:00",
-									"partitionOption": "None"
+									"type": "BinarySource",
+									"storeSettings": {
+										"type": "GoogleCloudStorageReadSettings",
+										"recursive": true
+									},
+									"formatSettings": {
+										"type": "BinaryReadSettings"
+									}
+								},
+								"sink": {
+									"type": "BinarySink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									}
 								},
 								"enableStaging": false
-							}
+							},
+							"inputs": [
+								{
+									"referenceName": "GCS_BlobStorage",
+									"type": "DatasetReference",
+									"parameters": {
+										"folder_name": "image",
+										"file_name": {
+											"value": "@concat(item(),'.png')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Binary_roihaan",
+									"type": "DatasetReference",
+									"parameters": {
+										"container_name": "development",
+										"folder_name": "images",
+										"file_name": {
+											"value": "@concat(item(),'.png')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						},
 						{
 							"name": "Success_log",
@@ -178,8 +216,20 @@
 								"secureInput": false
 							},
 							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "SQL_roihaan",
+								"type": "LinkedServiceReference"
+							},
 							"typeProperties": {
-								"scripts": [],
+								"scripts": [
+									{
+										"type": "Query",
+										"text": {
+											"value": "@concat('INSERT INTO dbo.image_list (image_name, image_url) VALUES (''', item(), ''', ''https://hanifstorageaccount.blob.core.windows.net/hanifcontainers/image/', item(), '.png', ''');')",
+											"type": "Expression"
+										}
+									}
+								],
 								"scriptBlockExecutionTimeout": "02:00:00"
 							}
 						},
@@ -202,8 +252,20 @@
 								"secureInput": false
 							},
 							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "SQL_roihaan",
+								"type": "LinkedServiceReference"
+							},
 							"typeProperties": {
-								"scripts": [],
+								"scripts": [
+									{
+										"type": "Query",
+										"text": {
+											"value": "@concat('INSERT INTO dbo.image_list (image_name, image_url, ingest_tme) VALUES (''', item(), ''', ''failed', ''', GETDATE());')",
+											"type": "Expression"
+										}
+									}
+								],
 								"scriptBlockExecutionTimeout": "02:00:00"
 							}
 						}
