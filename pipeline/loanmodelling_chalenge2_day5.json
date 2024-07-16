@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "GCS_BlobStorage",
+				"name": "application",
 				"type": "Copy",
 				"state": "Inactive",
 				"onInactiveMarkAs": "Succeeded",
@@ -18,51 +18,55 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "BinarySource",
-						"storeSettings": {
-							"type": "GoogleCloudStorageReadSettings",
-							"recursive": true
-						},
-						"formatSettings": {
-							"type": "BinaryReadSettings"
-						}
+						"type": "PostgreSqlV2Source"
 					},
 					"sink": {
-						"type": "SqlServerSink",
-						"writeBehavior": "insert",
-						"sqlWriterUseTableLock": false
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
 				},
 				"inputs": [
 					{
-						"referenceName": "GCS_BlobStorage",
+						"referenceName": "PostgreSqlTable_loanmodelling",
 						"type": "DatasetReference",
 						"parameters": {
-							"folder_name": {
-								"value": "@variables('folder_name')",
-								"type": "Expression"
-							},
-							"file_name": {
-								"value": "@variables('file_name')",
-								"type": "Expression"
-							}
+							"schema_name": "public",
+							"table_name": "application"
 						}
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "SQL_roihaan",
+						"referenceName": "CSV_ADLS_roihaan",
 						"type": "DatasetReference",
 						"parameters": {
-							"schema_name": "dbo",
-							"table_name": "list_image"
+							"container_name": "development",
+							"folder_name": "postgres_ingest",
+							"file_name": "application.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
 						}
 					}
 				]
 			},
 			{
-				"name": "SQLHanif_BlobStorage",
+				"name": "previous_application",
 				"type": "Copy",
 				"state": "Inactive",
 				"onInactiveMarkAs": "Succeeded",
@@ -77,13 +81,219 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "SqlServerSource",
-						"queryTimeout": "02:00:00",
-						"partitionOption": "None"
+						"type": "PostgreSqlV2Source"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "PostgreSqlTable_loanmodelling",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "public",
+							"table_name": "previous_application"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CSV_ADLS_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "development",
+							"folder_name": "postgres_ingest",
+							"file_name": "previous_application.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
+						}
+					}
+				]
+			},
+			{
+				"name": "bureau",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "PostgreSqlV2Source"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "PostgreSqlTable_loanmodelling",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "public",
+							"table_name": "bureau"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CSV_ADLS_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "development",
+							"folder_name": "postgres_ingest",
+							"file_name": "bureau.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
+						}
+					}
+				]
+			},
+			{
+				"name": "installment",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "PostgreSqlV2Source"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "PostgreSqlTable_loanmodelling",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "public",
+							"table_name": "installment"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CSV_ADLS_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "development",
+							"folder_name": "postgres_ingest",
+							"file_name": "installment.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
+						}
+					}
+				]
+			},
+			{
+				"name": "application_copy1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "application",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
 					},
 					"sink": {
 						"type": "SqlServerSink",
-						"writeBehavior": "insert",
+						"writeBehavior": "upsert",
+						"upsertSettings": {
+							"useTempDB": true,
+							"keys": [
+								"SK_ID_CURR"
+							]
+						},
 						"sqlWriterUseTableLock": false
 					},
 					"enableStaging": false,
@@ -98,14 +308,14 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "SQL_hanif",
+						"referenceName": "CSV_ADLS_roihaan",
 						"type": "DatasetReference",
 						"parameters": {
-							"schema_name": {
-								"value": "@variables('schema_name')",
-								"type": "Expression"
-							},
-							"table_name": "list_image"
+							"container_name": "development",
+							"folder_name": "postgres_ingest",
+							"file_name": "application.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
 						}
 					}
 				],
@@ -115,10 +325,255 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"schema_name": "dbo",
-							"table_name": "list_image"
+							"table_name": "application"
 						}
 					}
 				]
+			},
+			{
+				"name": "previous_application_copy1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "previous_application",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "upsert",
+						"upsertSettings": {
+							"useTempDB": true,
+							"keys": [
+								"SK_ID_PREV"
+							]
+						},
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "CSV_ADLS_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "development",
+							"folder_name": "postgres_ingest",
+							"file_name": "previous_application.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "dbo",
+							"table_name": "previous_application"
+						}
+					}
+				]
+			},
+			{
+				"name": "bureau_copy1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "bureau",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "upsert",
+						"upsertSettings": {
+							"useTempDB": true,
+							"keys": [
+								"SK_ID_BUREAU"
+							]
+						},
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "CSV_ADLS_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "development",
+							"folder_name": "postgres_ingest",
+							"file_name": "bureau.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "dbo",
+							"table_name": "bureau"
+						}
+					}
+				]
+			},
+			{
+				"name": "installment_copy1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "installment",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "upsert",
+						"upsertSettings": {
+							"useTempDB": true,
+							"keys": [
+								"NUM_INSTALMENT_NUMBER",
+								"SK_ID_PREV"
+							]
+						},
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "CSV_ADLS_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "development",
+							"folder_name": "postgres_ingest",
+							"file_name": "installment.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "dbo",
+							"table_name": "installment"
+						}
+					}
+				]
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"enableStaging": false
+				}
 			}
 		],
 		"variables": {
