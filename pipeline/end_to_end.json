@@ -5,7 +5,14 @@
 			{
 				"name": "customers",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "ADLS_customers",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -16,7 +23,15 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "MySqlSource"
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
 					},
 					"sink": {
 						"type": "SqlServerSink",
@@ -41,10 +56,17 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "MySqlGoogle_local",
+						"referenceName": "CSV_ADLS_roihaan",
 						"type": "DatasetReference",
 						"parameters": {
-							"table_name": "customers"
+							"container_name": "development",
+							"folder_name": {
+								"value": "@concat('data/customer/',formatDateTime(utcnow(), 'yyyy_MM_dd'))",
+								"type": "Expression"
+							},
+							"file_name": "customers.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
 						}
 					}
 				],
@@ -55,72 +77,6 @@
 						"parameters": {
 							"schema_name": "dbo",
 							"table_name": "customers"
-						}
-					}
-				]
-			},
-			{
-				"name": "orders",
-				"type": "Copy",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "MySqlSource",
-						"additionalColumns": [
-							{
-								"name": "ingest_time",
-								"value": {
-									"value": "@utcNow",
-									"type": "Expression"
-								}
-							}
-						]
-					},
-					"sink": {
-						"type": "SqlServerSink",
-						"writeBehavior": "upsert",
-						"upsertSettings": {
-							"useTempDB": true,
-							"keys": [
-								"order_id"
-							]
-						},
-						"sqlWriterUseTableLock": false
-					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"typeConversion": true,
-						"typeConversionSettings": {
-							"allowDataTruncation": true,
-							"treatBooleanAsNumber": false
-						}
-					}
-				},
-				"inputs": [
-					{
-						"referenceName": "MySqlGoogle_local",
-						"type": "DatasetReference",
-						"parameters": {
-							"table_name": "orders"
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "SQL_roihaan",
-						"type": "DatasetReference",
-						"parameters": {
-							"schema_name": "dbo",
-							"table_name": "orders"
 						}
 					}
 				]
@@ -128,7 +84,14 @@
 			{
 				"name": "order_items",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "ADLS_order_items",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -139,16 +102,15 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "MySqlSource",
-						"additionalColumns": [
-							{
-								"name": "ingest_time",
-								"value": {
-									"value": "@utcNow()",
-									"type": "Expression"
-								}
-							}
-						]
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
 					},
 					"sink": {
 						"type": "SqlServerSink",
@@ -174,10 +136,17 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "MySqlGoogle_local",
+						"referenceName": "CSV_ADLS_roihaan",
 						"type": "DatasetReference",
 						"parameters": {
-							"table_name": "order_items"
+							"container_name": "development",
+							"folder_name": {
+								"value": "@concat('data/order_items/',formatDateTime(utcnow(), 'yyyy_MM_dd'))",
+								"type": "Expression"
+							},
+							"file_name": "order_items.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
 						}
 					}
 				],
@@ -197,12 +166,6 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "orders",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					},
-					{
 						"activity": "customers",
 						"dependencyConditions": [
 							"Succeeded"
@@ -210,6 +173,12 @@
 					},
 					{
 						"activity": "order_items",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "orders",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -226,6 +195,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlServerSource",
+						"sqlReaderQuery": "SELECT\n    a.customer_id,\n    CONVERT(char(7), b.order_purchase_timestamp, 126) AS [month_id],\n    DATEDIFF(day, MAX(b.order_purchase_timestamp), '2018-08-31') AS recency,\n    COUNT(b.order_id) AS frequency,\n    SUM(c.price) AS monetary\nFROM dbo.customers a\nLEFT JOIN dbo.orders b ON a.customer_id = b.customer_id\nLEFT JOIN dbo.order_items c ON b.order_id = c.order_id\nGROUP BY a.customer_id, CONVERT(char(7), b.order_purchase_timestamp, 126);\n",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -268,6 +238,301 @@
 						"parameters": {
 							"schema_name": "dbo",
 							"table_name": "fact_customer_rfm"
+						}
+					}
+				]
+			},
+			{
+				"name": "orders",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "ADLS_orders",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink",
+						"writeBehavior": "upsert",
+						"upsertSettings": {
+							"useTempDB": true,
+							"keys": [
+								"order_id"
+							]
+						},
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "CSV_ADLS_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "development",
+							"folder_name": {
+								"value": "@concat('data/order/',formatDateTime(utcnow(), 'yyyy_MM_dd'))",
+								"type": "Expression"
+							},
+							"file_name": "orders.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema_name": "dbo",
+							"table_name": "orders"
+						}
+					}
+				]
+			},
+			{
+				"name": "ADLS_customers",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "MySqlSource",
+						"additionalColumns": [
+							{
+								"name": "ingest_time",
+								"value": {
+									"value": "@utcNow()",
+									"type": "Expression"
+								}
+							}
+						]
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MySqlGoogle_local",
+						"type": "DatasetReference",
+						"parameters": {
+							"table_name": "customers"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CSV_ADLS_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "development",
+							"folder_name": {
+								"value": "@concat('data/customer/',formatDateTime(utcnow(), 'yyyy_MM_dd'))",
+								"type": "Expression"
+							},
+							"file_name": "customers.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
+						}
+					}
+				]
+			},
+			{
+				"name": "ADLS_orders",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "MySqlSource",
+						"additionalColumns": [
+							{
+								"name": "ingest_time",
+								"value": {
+									"value": "@utcNow()",
+									"type": "Expression"
+								}
+							}
+						]
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MySqlGoogle_local",
+						"type": "DatasetReference",
+						"parameters": {
+							"table_name": "orders"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CSV_ADLS_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "development",
+							"folder_name": {
+								"value": "@concat('data/order/',formatDateTime(utcnow(), 'yyyy_MM_dd'))",
+								"type": "Expression"
+							},
+							"file_name": "orders.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
+						}
+					}
+				]
+			},
+			{
+				"name": "ADLS_order_items",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "MySqlSource",
+						"additionalColumns": [
+							{
+								"name": "ingest_time",
+								"value": {
+									"value": "@utcNow()",
+									"type": "Expression"
+								}
+							}
+						]
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MySqlGoogle_local",
+						"type": "DatasetReference",
+						"parameters": {
+							"table_name": "order_items"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CSV_ADLS_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "development",
+							"folder_name": {
+								"value": "@concat('data/order_items/',formatDateTime(utcnow(), 'yyyy_MM_dd'))",
+								"type": "Expression"
+							},
+							"file_name": "order_items.csv",
+							"delimiter_name": ",",
+							"row_as_header": true
 						}
 					}
 				]
