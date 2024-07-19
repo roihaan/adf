@@ -1,0 +1,28 @@
+{
+	"name": "example_databricks",
+	"properties": {
+		"activities": [
+			{
+				"name": "Example",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/kelompok_5@dunialcwefdit.onmicrosoft.com/Roihaan/Utility/starter_notebook"
+				},
+				"linkedServiceName": {
+					"referenceName": "DB_Kelompok_5",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": []
+	}
+}

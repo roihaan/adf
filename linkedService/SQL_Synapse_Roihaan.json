@@ -1,0 +1,17 @@
+{
+	"name": "SQL_Synapse_Roihaan",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "celeratessynapse-ondemand.sql.azuresynapse.net",
+			"database": "kelompok_3",
+			"encrypt": "mandatory",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "admin_sa",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQEUxM0JCRTI4LTE2N0QtNEM3MS04QTc1LTU4RDI2QTY1RjdBM181ODdhNjhkYS04ZjZmLTRiZjctYjA3NC1mNTk4N2VjMzNhMTAiDQp9"
+		}
+	}
+}
