@@ -1,0 +1,16 @@
+{
+	"name": "SQL_ChallengeSCD",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQL_challenge2_hanif",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"schema_name": "dbo",
+				"table_name": "Data"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": []
+	}
+}
