@@ -67,6 +67,9 @@
 					"secureInput": false
 				},
 				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/kelompok_5@dunialcwefdit.onmicrosoft.com/Roihaan"
+				},
 				"linkedServiceName": {
 					"referenceName": "DB_Kelompok_5",
 					"type": "LinkedServiceReference"
