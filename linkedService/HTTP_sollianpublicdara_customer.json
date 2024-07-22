@@ -7,10 +7,6 @@
 			"url": "https://solliancepublicdata.blob.core.windows.net/dataengineering/dp-203/awdata/CustomerSource.csv",
 			"enableServerCertificateValidation": true,
 			"authenticationType": "Anonymous"
-		},
-		"connectVia": {
-			"referenceName": "roihaanlocal",
-			"type": "IntegrationRuntimeReference"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/linkedservices"
