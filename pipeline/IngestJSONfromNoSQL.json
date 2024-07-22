@@ -1,0 +1,56 @@
+{
+	"name": "IngestJSONfromNoSQL",
+	"properties": {
+		"activities": [
+			{
+				"name": "MongoDb",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "MongoDbV2Source",
+						"batchSize": 100
+					},
+					"sink": {
+						"type": "BinarySink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "MongoDbV2Collection1",
+						"type": "DatasetReference",
+						"parameters": {
+							"collection_name": "."
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Binary_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "development",
+							"folder_name": "ChallengeDay9"
+						}
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "Challenge_Day9"
+		},
+		"annotations": []
+	}
+}
