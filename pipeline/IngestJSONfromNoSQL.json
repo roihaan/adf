@@ -20,9 +20,12 @@
 						"batchSize": 100
 					},
 					"sink": {
-						"type": "BinarySink",
+						"type": "JsonSink",
 						"storeSettings": {
 							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
 						}
 					},
 					"enableStaging": false
@@ -30,19 +33,17 @@
 				"inputs": [
 					{
 						"referenceName": "MongoDbV2Collection1",
-						"type": "DatasetReference",
-						"parameters": {
-							"collection_name": "."
-						}
+						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "Binary_roihaan",
+						"referenceName": "JSON_roihaannew",
 						"type": "DatasetReference",
 						"parameters": {
 							"container_name": "development",
-							"folder_name": "ChallengeDay9"
+							"folder_name": "day9",
+							"file_name": "documents.json"
 						}
 					}
 				]
