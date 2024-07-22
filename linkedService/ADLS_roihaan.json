@@ -6,10 +6,10 @@
 		"type": "AzureBlobFS",
 		"typeProperties": {
 			"url": "https://storageaccroihaan.dfs.core.windows.net/",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJiNDA1OGUyNS01YjViLTQ2MjUtYmE0OC1jZWMwYThmZTdjNTUiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI2MTE0NmQwNS1mY2M3LTRjYjMtOGE5YS02YTMwMTJmZjY5YTIiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
-			"referenceName": "localroihaan2",
+			"referenceName": "roihaanlocal",
 			"type": "IntegrationRuntimeReference"
 		}
 	}
