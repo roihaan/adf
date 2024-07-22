@@ -1,0 +1,15 @@
+{
+	"name": "MongoDbV2Collection1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MongoDb_ChallengeDay9",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "MongoDbV2Collection",
+		"schema": [],
+		"typeProperties": {
+			"collection": "documents"
+		}
+	}
+}

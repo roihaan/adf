@@ -1,0 +1,125 @@
+{
+	"name": "IngestJSONfromNoSQL",
+	"properties": {
+		"activities": [
+			{
+				"name": "MongoDb",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "MongoDbV2Source",
+						"batchSize": 100
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "MongoDbV2Collection1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "JSON_roihaannew",
+						"type": "DatasetReference",
+						"parameters": {
+							"container_name": "development",
+							"folder_name": "day9",
+							"file_name": "documents.json"
+						}
+					}
+				]
+			},
+			{
+				"name": "Notebook1",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "MongoDb",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "DB_Kelompok_5",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Notebook1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "ParquetReadSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Parquet_ADLS_roihaan",
+						"type": "DatasetReference",
+						"parameters": {
+							"folder_name": "day9/output",
+							"File_name": "part-00000-tid-7580142305920835891-f657f46e-c36b-42a7-b5fe-394a71371218-42-1-c000.snappy.parquet"
+						}
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "Challenge_Day9"
+		},
+		"annotations": []
+	}
+}
