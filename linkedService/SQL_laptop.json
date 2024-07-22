@@ -5,16 +5,16 @@
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
-			"server": "LAPTOP-N0LDBLA4",
+			"server": "DESKTOP-E36FPOQ\\MSSQLSERVER01",
 			"database": "AdventureWorks2022",
 			"encrypt": "mandatory",
 			"trustServerCertificate": true,
 			"authenticationType": "SQL",
 			"userName": "sa",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJjMDBlMzIyNi1jY2YxLTQzM2YtYmFmNS1kNGVhYWMzYzE0ZDIiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJiMjI0ZjFlNy1hYzdkLTQzMTAtOGQ2ZC1mODljYjUyMmVmNjEiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
-			"referenceName": "localroihaan",
+			"referenceName": "roihaanlocal",
 			"type": "IntegrationRuntimeReference"
 		}
 	}
